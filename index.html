@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎄 圣诞快乐 🎄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a0533 0%, #2d1b4e 25%, #1e3a5f 50%, #0d2137 75%, #1a0533 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 音乐控制按钮 */
+        .music-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .music-icon { font-size: 20px; color: white; user-select: none; }
+        .is-playing { animation: musicRotate 3s linear infinite; border-color: #ffd700; }
+        @keyframes musicRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* 背景装饰和雪花样式 (保持不变) */
+        .bg-glow { position: fixed; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: float 20s ease-in-out infinite; }
+        .glow-orb:nth-child(1) { width: 400px; height: 400px; background: radial-gradient(circle, #ff6b9d 0%, transparent 70%); top: -100px; left: -100px; }
+        .glow-orb:nth-child(2) { width: 350px; height: 350px; background: radial-gradient(circle, #c471ed 0%, transparent 70%); top: 50%; right: -100px; animation-delay: -7s; }
+        .glow-orb:nth-child(3) { width: 300px; height: 300px; background: radial-gradient(circle, #f093fb 0%, transparent 70%); bottom: -50px; left: 30%; animation-delay: -14s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-20px, 20px) scale(0.9); } }
+        .snow-container { position: fixed; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        .snowflake { position: absolute; color: white; opacity: 0.8; animation: fall linear infinite; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+
+        .container { position: relative; display: flex; flex-direction: column; align-items: center; z-index: 5; }
+        .top-star { position: relative; z-index: 20; animation: starGlow 2s ease-in-out infinite; margin-bottom: -30px; }
+        .star { font-size: 80px; color: #fff7bc; filter: drop-shadow(0 0 20px #ffd700); animation: starPulse 1.5s ease-in-out infinite; }
+        @keyframes starPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; filter: drop-shadow(0 0 40px #ffd700); } }
+        .tree-container { position: relative; width: 500px; height: 450px; display: flex; justify-content: center; align-items: center; }
+        #particleTreeCanvas { pointer-events: none; }
+
+        /* 礼物盒样式 (保持不变) */
+        .gifts { display: flex; gap: 15px; margin-top: 20px; position: relative; z-index: 10; }
+        .gift { position: relative; animation: giftBounce 2s ease-in-out infinite; }
+        @keyframes giftBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .gift-box { width: 50px; height: 45px; border-radius: 5px; position: relative; overflow: hidden; }
+        .gift-box.pink { background: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%); }
+        .gift-box.purple { background: linear-gradient(135deg, #c471ed 0%, #9b59b6 100%); }
+        .gift-box.gold { background: linear-gradient(135deg, #ffd93d 0%, #f5b800 100%); }
+        .gift-box.santa-style { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border: 1px solid rgba(255,255,255,0.2); }
+        .santa-belt { position: absolute; width: 100%; height: 8px; background: #222; top: 50%; transform: translateY(-50%); }
+        .santa-buckle { position: absolute; width: 14px; height: 14px; border: 2px solid #f1c40f; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .gift-ribbon-v { position: absolute; width: 8px; height: 100%; background: white; left: 50%; transform: translateX(-50%); }
+        .gift-ribbon-h { position: absolute; width: 100%; height: 8px; background: white; top: 50%; transform: translateY(-50%); }
+        .gift-bow { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 24px; }
+
+        .greeting { margin-top: 30px; text-align: center; }
+        .greeting-text { font-family: 'Great Vibes', cursive; font-size: 48px; color: #fff; text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); margin-bottom: 10px; }
+        .greeting-sub { font-size: 18px; color: rgba(255, 255, 255, 0.8); letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+    <!-- 音乐控制按钮 -->
+    <div id="musicBtn" class="music-btn">
+        <span class="music-icon">🎵</span>
+    </div>
+
+    <!-- 这里的 src 指向你本地的音乐文件 -->
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <div class="bg-glow">
+        <div class="glow-orb"></div><div class="glow-orb"></div><div class="glow-orb"></div>
+    </div>
+
+    <div class="snow-container" id="snowContainer"></div>
+
+    <div class="container">
+        <div class="top-star"><div class="star">★</div></div>
+        <div class="tree-container"><canvas id="particleTreeCanvas"></canvas></div>
+        <div class="gifts">
+            <div class="gift"><div class="gift-box santa-style"><div class="santa-belt"></div><div class="santa-buckle"></div></div><div class="gift-bow">🎁</div></div>
+            <div class="gift"><div class="gift-box pink"><div class="gift-ribbon-v"></div><div class="gift-ribbon-h"></div></div><div class="gift-bow">🎀</div></div>
+            <div class="gift"><div class="gift-box purple"><div class="gift-ribbon-v"></div><div class="gift-ribbon-h"></div></div><div class="gift-bow">🎀</div></div>
+            <div class="gift"><div class="gift-box gold"><div class="gift-ribbon-v"></div><div class="gift-ribbon-h"></div></div><div class="gift-bow">🎀</div></div>
+        </div>
+        <div class="greeting">
+            <div class="greeting-text">Merry Christmas</div>
+            <div class="greeting-sub">愿你的世界永远闪耀 ✨</div>
+        </div>
+    </div>
+
+    <script>
+        // 音乐控制逻辑
+        const musicBtn = document.getElementById('musicBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.classList.remove('is-playing');
+            } else {
+                // 尝试播放
+                const playPromise = bgMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        musicBtn.classList.add('is-playing');
+                        isPlaying = true;
+                    }).catch(error => {
+                        console.log("播放失败，请确认 music.mp3 文件是否存在于正确位置");
+                    });
+                }
+            }
+            if (isPlaying) isPlaying = false; else isPlaying = true; // 简单的状态切换逻辑优化
+        }
+
+        // 绑定点击事件到按钮
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMusic();
+        });
+
+        // 第一次点击页面任意地方尝试播放 (解决浏览器自动播放限制)
+        document.body.addEventListener('click', () => {
+            if (!isPlaying) {
+                bgMusic.play().then(() => {
+                    musicBtn.classList.add('is-playing');
+                    isPlaying = true;
+                }).catch(e => {});
+            }
+        }, { once: true });
+
+        /* --- 这里的粒子树和雪花算法代码 (为了简洁此处略过，请保留你原有的完整 JS 代码) --- */
+        // (保持 createSnowflakes, initParticleTree 等函数不变)
+        
+        function createSnowflakes() {
+            const container = document.getElementById('snowContainer');
+            const snowflakes = ['❄', '❅', '❆', '✧'];
+            for (let i = 0; i < 50; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(snowflake);
+            }
+        }
+
+        function initParticleTree() {
+            const canvas = document.getElementById('particleTreeCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 500; canvas.height = 400;
+            let tick = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                tick += 0.015;
+                const centerX = canvas.width / 2;
+                const bottomY = canvas.height * 0.9;
+                for (let i = 0; i < 900; i++) {
+                    let ratio = i / 900;
+                    let angle = i * 0.2 + tick * 3; 
+                    let radius = (1 - ratio) * 160; 
+                    let x = centerX + Math.cos(angle) * radius;
+                    let y = bottomY - ratio * 350;
+                    let opacity = Math.sin(angle) * 0.5 + 0.5;
+                    let hue = [45, 145, 320, 180][i % 4];
+                    ctx.fillStyle = `hsla(${hue}, 80%, 70%, ${opacity * (1 - ratio + 0.3)})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, (1 - ratio) * 2 + 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        createSnowflakes();
+        initParticleTree();
+    </script>
+</body>
+</html>
